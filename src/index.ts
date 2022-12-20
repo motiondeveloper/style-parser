@@ -3,7 +3,10 @@ type ParsedSection = {
   style: string;
 };
 
-function parseStyles(inputText: string) {
+function parseStyles(
+  inputText: string,
+  customParsers: Array<{ matcher: RegExp; stylename: string }>
+) {
   /** Split the input text into an array of lines */
   const inputLines = inputText.split(/[\r\n\3]/g);
 
@@ -38,16 +41,21 @@ function parseStyles(inputText: string) {
     };
   }
 
-  /** Matches *content* */
-  const BOLD_REGEX = new RegExp(/\*(.*)\*/);
-  const parseBold = createLineParser(BOLD_REGEX, 'bold');
+  const parsers = customParsers ?? [
+    { stylename: 'bold', matcher: new RegExp(/\*(.*)\*/) },
+    { stylename: 'italics', matcher: new RegExp(/_(.*)_/) },
+  ];
 
-  /** Matches _content_ */
-  const ITALICS_REGEX = new RegExp(/_(.*)_/);
-  const parseItalics = createLineParser(ITALICS_REGEX, 'italics');
+  // Parse all the styles
+  let styles: (string | ParsedSection | ParsedSection[])[] = inputLines;
+  for (const { matcher, stylename } of parsers) {
+    const parser = createLineParser(matcher, stylename);
+    styles = styles.map(parser);
+  }
 
-  const textStylesByLine = inputLines.map(parseBold).map(parseItalics);
-  return textStylesByLine;
+  return styles.map((line) =>
+    typeof line === 'string' ? { content: line, style: 'regular' } : line
+  );
 }
 
 // '_npmVersion' is replaced with value from package.json
