@@ -9,6 +9,10 @@
 
 Learn more about writing `.jsx` files for After Effects here: https://motiondeveloper.com/blog/write-expressions-external-files/
 
+## Overview
+
+This library provides a few functions for turning text strings into an array of style objects. This can then be used in Ae to style an position a bunch of text layers.
+
 ```ts
 type StyleResult = { content: string; style: string; line: number }[];
 
