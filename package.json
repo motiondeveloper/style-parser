@@ -1,6 +1,6 @@
 {
   "name": "style-parser",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "After Effects Expression Library",
   "main": "dist/style-parser.jsx",
   "scripts": {

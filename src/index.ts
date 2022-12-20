@@ -6,7 +6,7 @@ type ParsedSection = {
 
 function parseStyles(
   inputText: string,
-  customParsers: Array<{ matcher: RegExp; stylename: string }>
+  customParsers: Array<{ matcher: RegExp; stylename: string }> = []
 ) {
   /** Split the input text into an array of lines */
   const inputLines = inputText.split(/[\r\n\3]/g);
@@ -42,7 +42,8 @@ function parseStyles(
     };
   }
 
-  const parsers = customParsers ?? [
+  const parsers = [
+    ...customParsers,
     { stylename: 'bold', matcher: new RegExp(/\*(.*)\*/) },
     { stylename: 'italics', matcher: new RegExp(/_(.*)_/) },
   ];
@@ -63,9 +64,14 @@ function parseStyles(
   return parsedStyles.flat();
 }
 
+const defaultFontMap = {
+  bold: 'Arial-BoldMT',
+  italics: 'Arial-ItalicMT',
+};
+
 // '_npmVersion' is replaced with value from package.json
 // during compilation
 const version: string = '_npmVersion';
 
 // Export values to appear in jsx files
-export { parseStyles, version };
+export { parseStyles, defaultFontMap, version };
