@@ -10,12 +10,10 @@
 Learn more about writing `.jsx` files for After Effects here: https://motiondeveloper.com/blog/write-expressions-external-files/
 
 ```ts
-type Line = Array<{ content: string; style: string }>;
-
 type parseStyles = (
   textString: string,
   parsers?: Array<{ matcher: RegExp; stylename: string }>
-) => Line[];
+) => { content: string; style: string; line: number }[];
 ```
 
 ## Example
@@ -35,14 +33,12 @@ Results in:
 
 ```js
 [
-  [{ content: 'This will', style: 'regular' }],
-  [
-    { content: 'be bold', style: 'bold' },
-    { content: 'and', style: 'regular' },
-  ],
-  [
-    { content: 'this will', style: 'regular' },
-    { content: 'be italics', style: 'italics' },
-  ],
+  { content: 'This will', style: 'regular', line: 0 },
+
+  { content: 'be bold', style: 'bold', line: 1 },
+  { content: 'and', style: 'regular', line: 1 },
+
+  { content: 'this will', style: 'regular', line: 2 },
+  { content: 'be italics', style: 'italics', line: 2 },
 ];
 ```

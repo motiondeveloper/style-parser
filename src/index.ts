@@ -1,6 +1,7 @@
 type ParsedSection = {
   content: string;
   style: string;
+  line: number;
 };
 
 function parseStyles(
@@ -12,7 +13,7 @@ function parseStyles(
 
   /** Creates a function that turns lines into a style tree based on a given regex */
   function createLineParser(matcher: RegExp, stylename: string) {
-    return (line: string | ParsedSection | ParsedSection[]) => {
+    return (line: string | ParsedSection | ParsedSection[], index: number) => {
       // Section has already been parsed
       if (typeof line !== 'string') return line;
       const captureGroups = matcher.exec(line);
@@ -31,10 +32,10 @@ function parseStyles(
             if (content === '') return null;
             // The content is what matched the regex, it's the styled content
             if (content === captureGroups[1]) {
-              return { content, style: stylename };
+              return { line: index, content, style: stylename };
             }
             // It's unstyled
-            return { content, style: 'regular' };
+            return { line: index, content, style: 'regular' };
           })
           .filter(Boolean) as ParsedSection[]
       );
@@ -47,15 +48,19 @@ function parseStyles(
   ];
 
   // Parse all the styles
-  let styles: (string | ParsedSection | ParsedSection[])[] = inputLines;
+  let styles = inputLines;
   for (const { matcher, stylename } of parsers) {
     const parser = createLineParser(matcher, stylename);
     styles = styles.map(parser);
   }
 
-  return styles.map((line) =>
-    typeof line === 'string' ? { content: line, style: 'regular' } : line
+  const parsedStyles = styles.map((line, index) =>
+    typeof line === 'string'
+      ? [{ content: line, style: 'regular', line: index }]
+      : line
   );
+
+  return parsedStyles.flat();
 }
 
 // '_npmVersion' is replaced with value from package.json
