@@ -10,10 +10,25 @@
 Learn more about writing `.jsx` files for After Effects here: https://motiondeveloper.com/blog/write-expressions-external-files/
 
 ```ts
+type StyleResult = { content: string; style: string; line: number }[];
+
+/** Parse a markdown-ish string*/
 type parseStyles = (
   textString: string,
   parsers?: Array<{ matcher: RegExp; stylename: string }>
-) => { content: string; style: string; line: number }[];
+) => StyleResult;
+
+/** Style the given word indexes */
+type styleByIndex = (textString: string, {
+   boldIndexes: number[],
+   italicsIndexes: number[]
+}) => StyleResult;
+
+/** Style the given words */
+type styleBySearch = (textString: string, {
+   boldString?: string,
+   italicsString?: string,
+}) => StyleResult;
 ```
 
 ## Example
@@ -42,3 +57,7 @@ Results in:
   { content: 'be italics', style: 'italics', line: 2 },
 ];
 ```
+
+## Limitations
+
+Currently you need to style whole words in each method, otherwise you'll get unnecessary spaces inserted.
